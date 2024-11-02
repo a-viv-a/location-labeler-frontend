@@ -17,10 +17,8 @@ deploy: build
     wrangler pages deploy
 
 check:
-    tsc --noEmit --watch
+    # some nested dep has bad types...
+    tsc --noEmit --watch --skipLibCheck
 
 # test:
 #     npx vitest --exclude ".direnv/**"
-
-typegen:
-    wrangler types
