@@ -2,7 +2,6 @@ import { MetaProvider, Title } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
-import "./app.css";
 import "./pico.violet.min.css"
 
 export default function App() {
@@ -15,9 +14,9 @@ export default function App() {
               <li><strong>Locate</strong></li>
             </ul>
             <ul>
+              <li><a href="/">Home</a></li>
               <li><a href="/about">About</a></li>
-              <li><a href="/set-location">Set Location</a></li>
-              <li><a href="#">Github</a></li>
+              <li><a href="https://github.com/a-viv-a/location-labeler-frontend">Github</a></li>
             </ul>
           </nav>
           <Suspense>{props.children}</Suspense>
