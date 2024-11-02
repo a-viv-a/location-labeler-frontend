@@ -1,4 +1,6 @@
 
+.direnv/
+
 dist
 .solid
 .output

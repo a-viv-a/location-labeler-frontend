@@ -1,5 +1,5 @@
 {
-  "name": "example-basic",
+  "name": "location-labeler-frontend",
   "type": "module",
   "scripts": {
     "dev": "vinxi dev",
@@ -20,7 +20,6 @@
     "node": ">=18"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241022.0",
-    "wrangler": "^3.84.1"
+    "@cloudflare/workers-types": "^4.20241022.0"
   }
 }
