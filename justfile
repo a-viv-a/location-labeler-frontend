@@ -1,10 +1,13 @@
 vinxi COMMAND:
     npx vinxi {{COMMAND}}
 
-dev:
+prebuild:
+    cp ./src/components/client-metadata.json ./public/
+
+dev: prebuild
     just vinxi dev
 
-build:
+build: prebuild
     just vinxi build
 
 version:

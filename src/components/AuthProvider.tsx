@@ -1,6 +1,6 @@
 import { children, createContext, onMount, ParentComponent, Suspense, useContext } from "solid-js"
 import type { BrowserOAuthClient } from "@atproto/oauth-client-browser";
-import clientId from "/client-metadata.json?url"
+import clientMetadata from "./client-metadata.json"
 import { createStore } from "solid-js/store";
 
 const [auth, setAuth] = createStore<{
@@ -16,10 +16,9 @@ export const asyncClientEntryHook = async () => {
     throw new Error("client entry hook called twice")
   }
   const BrowserOAuthClient = (await import("@atproto/oauth-client-browser")).BrowserOAuthClient
-  client = await BrowserOAuthClient.load({
-    clientId,
-    // TODO: explore a real solution?
-    handleResolver: "https://bsky.social"
+  client = new BrowserOAuthClient({
+    // @ts-expect-error some weird typing issue...
+    clientMetadata,
   })
   setAuth({
     init: client.init()
