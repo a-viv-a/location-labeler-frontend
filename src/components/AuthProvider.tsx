@@ -35,11 +35,13 @@ export const triggerSignIn = async (handle: string) => {
       prompt: 'none',
       // TODO: abort controller signal
     })
-
-    throw new Error("unreachable")
   } catch (err) {
-    // user went back!
+    if (err instanceof Error) {
+      return err
+    }
+    throw err
   }
+  throw new Error("unreachable")
 }
 
 const AuthContext = createContext(auth)
