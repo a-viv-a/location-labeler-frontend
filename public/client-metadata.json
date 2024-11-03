@@ -1,0 +1,12 @@
+{
+  "client_id": "https://locate.aviva.gay/client-metadata.json",
+  "client_name": "Location Labeler",
+  "client_uri": "https://locate.aviva.gay",
+  "redirect_uris": ["https://locate.aviva.gay/callback"],
+  "scope": "atproto",
+  "grant_types": ["authorization_code", "refresh_token"],
+  "response_types": ["code"],
+  "token_endpoint_auth_method": "none",
+  "application_type": "web",
+  "dpop_bound_access_tokens": true
+}

@@ -3,6 +3,7 @@ import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
 import "./pico.violet.min.css"
+import { AuthProvider } from "./components/AuthProvider";
 
 export default function App() {
   return (
@@ -19,7 +20,7 @@ export default function App() {
               <li><a href="https://github.com/a-viv-a/location-labeler-frontend">Github</a></li>
             </ul>
           </nav>
-          <Suspense>{props.children}</Suspense>
+          <AuthProvider>{props.children}</AuthProvider>
         </MetaProvider>
       )}
     >

@@ -10,6 +10,7 @@
     "deploy": "npm run build && wrangler pages deploy"
   },
   "dependencies": {
+    "@atproto/oauth-client-browser": "^0.3.0",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.15.0",
     "@solidjs/start": "^1.0.10",
