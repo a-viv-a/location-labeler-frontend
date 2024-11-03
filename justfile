@@ -2,7 +2,7 @@ vinxi COMMAND:
     npx vinxi {{COMMAND}}
 
 prebuild:
-    cp ./src/components/client-metadata.json ./public/
+    cp {{justfile_directory()}}/src/components/client-metadata.json {{justfile_directory()}}/public/
 
 dev: prebuild
     just vinxi dev
