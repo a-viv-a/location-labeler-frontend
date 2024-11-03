@@ -19,6 +19,8 @@ export const asyncClientEntryHook = async () => {
   client = new BrowserOAuthClient({
     // @ts-expect-error some weird typing issue...
     clientMetadata,
+    // TODO: explore hosting something for this in a worker function within this repo?
+    handleResolver: "https://bsky.social"
   })
   setAuth({
     init: client.init()
@@ -32,7 +34,15 @@ export const triggerSignIn = async (handle: string) => {
 
   try {
     await client.signIn(handle, {
-      prompt: 'none',
+      /**
+       * copied from atproto source:
+       *
+       * - "none" will only be allowed if the user already allowed the client on the same device
+       * - "login" will force the user to login again, unless he very recently logged in
+       * - "consent" will force the user to consent again
+       * - "select_account" will force the user to select an account
+       */
+      prompt: 'login',
       // TODO: abort controller signal
     })
   } catch (err) {

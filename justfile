@@ -18,6 +18,9 @@ preview: build
 
 deploy: build
     wrangler pages deploy
+        
+deploy-main: build
+    wrangler pages deploy --branch=main
 
 check:
     # some nested dep has bad types...
