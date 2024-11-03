@@ -39,9 +39,11 @@ export default function SetLocation() {
     if (position === null) {
       return null
     }
-    await new Promise(r => setTimeout(r, 2000));
-    return "5"
-    // TODO: work
+    let {latitude: lat, longitude: lon} = position.coords
+    let resp = await fetch(`https://location-labeler.aviva.gay/request-label?lat=${lat}?lon=${lon}`, {
+      method: 'POST'
+    })
+    return resp.json()
   })
 
   const onReadLocation = () => {
@@ -73,7 +75,7 @@ export default function SetLocation() {
           <Switch fallback={<ReadLocation {...{ onReadLocation }} />}>
             <Match when={labelResult()}>
               <Suspense fallback={<p>lol</p>}>
-                {labelResult()}
+                {`${labelResult()}`}
               </Suspense>
             </Match>
             <Match when={error()}>{error =>
