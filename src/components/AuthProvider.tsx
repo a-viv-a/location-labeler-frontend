@@ -1,4 +1,4 @@
-import { children, createContext, onMount, ParentComponent, Suspense, useContext } from "solid-js"
+import { children, createContext, createResource, onMount, ParentComponent, Suspense, useContext } from "solid-js"
 import type { BrowserOAuthClient } from "@atproto/oauth-client-browser";
 import clientMetadata from "./client-metadata.json"
 import { createStore } from "solid-js/store";
@@ -61,3 +61,20 @@ export const AuthProvider: ParentComponent = (props) => {
 }
 
 export const useAuth = () => useContext(AuthContext)
+
+export const useAuthInit = () => {
+  const auth = useAuth()
+  const [initResource] = createResource(() => auth.init, async (init) => {
+    if (init === null) {
+      // don't do anything, wait for init to not be null
+      console.log("init was null, stalling...")
+      await new Promise(() => {})
+      throw new Error('unreachable')
+    }
+    console.log(init)
+    console.log("awaiting init...")
+    return await init
+  })
+
+  return initResource
+}
