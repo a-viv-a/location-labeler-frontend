@@ -1,4 +1,5 @@
 import { Title } from "@solidjs/meta";
+import Login from "~/components/Login";
 
 export default function Home() {
   return (
@@ -6,12 +7,9 @@ export default function Home() {
       <Title>Bluesky Location Labeler</Title>
       <h1>Location Labeler</h1>
       <p>
-        Visit{" "}
-        <a href="https://start.solidjs.com" target="_blank">
-          start.solidjs.com
-        </a>{" "}
-        to learn how to build SolidStart apps.
+        words about things
       </p>
+      <Login />
     </main>
   );
 }

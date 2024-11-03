@@ -26,6 +26,23 @@ export const asyncClientEntryHook = async () => {
   })
 }
 
+export const triggerSignIn = async (handle: string) => {
+  if (client === null) {
+    throw new Error('tried to trigger sign in before the client was initialized')
+  }
+
+  try {
+    await client.signIn(handle, {
+      prompt: 'none',
+      // TODO: abort controller signal
+    })
+
+    throw new Error("unreachable")
+  } catch (err) {
+    // user went back!
+  }
+}
+
 const AuthContext = createContext(auth)
 
 export const AuthProvider: ParentComponent = (props) => {
