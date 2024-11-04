@@ -79,7 +79,7 @@ export default function SetLocation() {
 
   const [labelResult] = createResource(() => [authInit(), position()] as const, async ([authInit, position]) => {
     if (position === null || authInit === undefined) {
-      return await forever()
+      return undefined
     }
     let jwtToken = await getJwtToken(authInit)
     console.log({ jwtToken })
