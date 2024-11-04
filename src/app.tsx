@@ -16,6 +16,7 @@ export default function App() {
             </ul>
             <ul>
               <li><a href="/">Home</a></li>
+              <li><a href="/set-location">Set Location</a></li>
               <li><a href="/about">About</a></li>
               <li><a href="https://github.com/a-viv-a/location-labeler-frontend">Github</a></li>
             </ul>

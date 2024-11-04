@@ -56,7 +56,10 @@ type RequestLabelResponseJson = RequestLabelErrorResponse | RequestLabelSuccessR
 
 const ShowReqSuccess: Component<{ success: RequestLabelSuccessResponse }> = props => {
   return <>
-    <code>{props.success.labelDefinition.identifier}</code>
+    <h2>Success! ({props.success.msg})</h2>
+    You have been assigned <code>{props.success.labelDefinition.en_locale_name}</code> which represents the location of {props.success.labelDefinition.en_locale_desc} and is identified by <code>{props.success.labelDefinition.identifier}</code>, an ascii encoding of the openstreetmaps <code>type-id-category</code>
+    <br />
+    Your estimated distance in miles based on IP from the location your device reported is {props.success.estimatedDistanceMiles}.
   </>
 }
 const ShowReqError: Component<{ error: RequestLabelErrorResponse }> = props => {
