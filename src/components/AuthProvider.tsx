@@ -2,6 +2,9 @@ import { children, createContext, createResource, onMount, ParentComponent, Susp
 import type { BrowserOAuthClient } from "@atproto/oauth-client-browser";
 import clientMetadata from "./client-metadata.json"
 import { createStore } from "solid-js/store";
+import { createServiceJwt } from "@atproto/xrpc-server";
+import { Agent } from "@atproto/api";
+import { forever } from "~/util";
 
 const [auth, setAuth] = createStore<{
   init: ReturnType<InstanceType<typeof BrowserOAuthClient>['init']> | null
@@ -54,6 +57,18 @@ export const triggerSignIn = async (handle: string) => {
   throw new Error("unreachable")
 }
 
+export const getJwtToken = async (from: NonNullable<Awaited<ReturnType<InstanceType<typeof BrowserOAuthClient>['init']>>>) => {
+  if (client === null) {
+    throw new Error("can't create jwt when client is not initalized")
+  }
+  const session = await client.restore(from.session.did)
+
+  const agent = new Agent(session)
+  // plc:jp6khwtiduqw7y5hm75vh6ve is locate.aviva.gay
+  const token = (await agent.call('com.atproto.server.getServiceAuth', {aud: 'did:plc:jp6khwtiduqw7y5hm75vh6ve'})).data.token as string
+  return token
+}
+
 const AuthContext = createContext(auth)
 
 export const AuthProvider: ParentComponent = (props) => {
@@ -68,8 +83,7 @@ export const useAuthInit = () => {
     if (init === null) {
       // don't do anything, wait for init to not be null
       console.log("init was null, stalling...")
-      await new Promise(() => {})
-      throw new Error('unreachable')
+      return await forever()
     }
     console.log(init)
     console.log("awaiting init...")

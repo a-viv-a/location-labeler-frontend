@@ -1,5 +1,7 @@
 import { Title } from "@solidjs/meta";
 import { Accessor, batch, Component, createEffect, createResource, createSignal, Match, Show, Suspense, Switch } from "solid-js";
+import { getJwtToken, useAuthInit } from "~/components/AuthProvider";
+import { forever, narrow } from "~/util";
 
 
 const ReadLocation: Component<{ onReadLocation: () => void }> = props => <>
@@ -57,7 +59,7 @@ const ShowReqSuccess: Component<{ success: RequestLabelSuccessResponse }> = prop
     <code>{props.success.labelDefinition.identifier}</code>
   </>
 }
-const ShowReqError: Component<{ error: RequestLabelErrorResponse}> = props => {
+const ShowReqError: Component<{ error: RequestLabelErrorResponse }> = props => {
   return <>
     <h2>Error!</h2>
     Error: {props.error.error}
@@ -67,27 +69,21 @@ const ShowReqError: Component<{ error: RequestLabelErrorResponse}> = props => {
   </>
 }
 
-
-// TODO: this should be a util
-const narrow = <A, B extends A>(accessor: Accessor<A>, guard: (v: A) => v is B): B | null => {
-  const val = accessor()
-  if (guard(val)) {
-    return val
-  }
-  return null
-}
-
 export default function SetLocation() {
   const [error, setError] = createSignal<GeolocationPositionError | null>(null);
   const [position, setPosition] = createSignal<GeolocationPosition | null>(null);
+  const authInit = useAuthInit();
 
-  const [labelResult] = createResource(() => position(), async (position) => {
-    if (position === null) {
-      await new Promise(() => { })
+  const [labelResult] = createResource(() => [authInit(), position()] as const, async ([authInit, position]) => {
+    if (position === null || authInit === undefined) {
+      return await forever()
     }
+    let jwtToken = await getJwtToken(authInit)
+    console.log({ jwtToken })
     let { latitude: lat, longitude: lon } = position.coords
-    let resp = await fetch(`https://location-labeler.aviva.gay/request-label?lat=${lat}?lon=${lon}`, {
-      method: 'POST'
+    let resp = await fetch(`https://location-labeler.aviva.gay/api/request-label?lat=${lat}?lon=${lon}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${jwtToken}` }
     })
     return await resp.json() as RequestLabelResponseJson
   })
@@ -120,7 +116,7 @@ export default function SetLocation() {
         </>}>
           <Switch fallback={<ReadLocation {...{ onReadLocation }} />}>
             <Match when={labelResult()}>{result =>
-              <Switch fallback={<>Unknown response:<br/><pre><code>{JSON.stringify(result(), undefined, 4)}</code></pre></>}>
+              <Switch fallback={<>Unknown response:<br /><pre><code>{JSON.stringify(result(), undefined, 4)}</code></pre></>}>
                 <Match when={narrow(result, v => 'msg' in v)}>{success =>
                   <ShowReqSuccess success={success()} />
                 }</Match>
