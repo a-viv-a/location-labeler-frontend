@@ -6,7 +6,7 @@ export default function Callback() {
   const init = useAuthInit();
 
   createEffect(() => {
-    if (init !== undefined) {
+    if (!init.loading && init() !== undefined) {
       window.location.href = "/set-location"
     }
   })

@@ -31,19 +31,61 @@ const ShowError: Component<{ onReadLocation: () => void, error: Accessor<Geoloca
   </>
 }
 
+// TODO: merge repos or make a package so these types don't drift
+type LabelDefinition = {
+  /** unique identifier for each label */
+  identifier: string,
+  /** english localized name */
+  en_locale_name: string,
+  /** english localized description */
+  en_locale_desc: string
+}
+
+type RequestLabelErrorResponse = {
+  error: string,
+  estimatedDistanceMiles?: number
+}
+type RequestLabelSuccessResponse = {
+  msg: string,
+  labelDefinition: LabelDefinition,
+  estimatedDistanceMiles: number
+}
+type RequestLabelResponseJson = RequestLabelErrorResponse | RequestLabelSuccessResponse
+
+const ShowReqSuccess: Component<{ success: RequestLabelSuccessResponse }> = props => {
+  return <>
+    <code>{props.success.labelDefinition.identifier}</code>
+  </>
+}
+const ShowReqError: Component<{ error: RequestLabelErrorResponse}> = props => {
+  return <>
+    <code>{props.error.error}</code>
+  </>
+}
+
+
+// TODO: this should be a util
+const narrow = <A, B extends A>(accessor: Accessor<A>, guard: (v: A) => v is B): B | null => {
+  const val = accessor()
+  if (guard(val)) {
+    return val
+  }
+  return null
+}
+
 export default function SetLocation() {
   const [error, setError] = createSignal<GeolocationPositionError | null>(null);
   const [position, setPosition] = createSignal<GeolocationPosition | null>(null);
 
   const [labelResult] = createResource(() => position(), async (position) => {
     if (position === null) {
-      return null
+      await new Promise(() => { })
     }
-    let {latitude: lat, longitude: lon} = position.coords
+    let { latitude: lat, longitude: lon } = position.coords
     let resp = await fetch(`https://location-labeler.aviva.gay/request-label?lat=${lat}?lon=${lon}`, {
       method: 'POST'
     })
-    return resp.json()
+    return await resp.json() as RequestLabelResponseJson
   })
 
   const onReadLocation = () => {
@@ -73,11 +115,16 @@ export default function SetLocation() {
           <progress />
         </>}>
           <Switch fallback={<ReadLocation {...{ onReadLocation }} />}>
-            <Match when={labelResult()}>
-              <Suspense fallback={<p>lol</p>}>
-                {`${labelResult()}`}
-              </Suspense>
-            </Match>
+            <Match when={labelResult()}>{result =>
+              <Switch>
+                <Match when={narrow(result, v => 'msg' in v)}>{success =>
+                  <ShowReqSuccess success={success()} />
+                }</Match>
+                <Match when={narrow(result, v => 'error' in v)}>{error =>
+                  <ShowReqError error={error()} />
+                }</Match>
+              </Switch>
+            }</Match>
             <Match when={error()}>{error =>
               <ShowError {...{ onReadLocation, error }} />
             }</Match>
