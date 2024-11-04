@@ -59,7 +59,11 @@ const ShowReqSuccess: Component<{ success: RequestLabelSuccessResponse }> = prop
 }
 const ShowReqError: Component<{ error: RequestLabelErrorResponse}> = props => {
   return <>
-    <code>{props.error.error}</code>
+    <h2>Error!</h2>
+    Error: {props.error.error}
+    <Show when={props.error.estimatedDistanceMiles}>{estimatedDistanceMiles =>
+      <p>Your estimated distance in miles based on IP from the location your device reported is {estimatedDistanceMiles()}</p>
+    }</Show>
   </>
 }
 
@@ -116,7 +120,7 @@ export default function SetLocation() {
         </>}>
           <Switch fallback={<ReadLocation {...{ onReadLocation }} />}>
             <Match when={labelResult()}>{result =>
-              <Switch>
+              <Switch fallback={<>Unknown response:<br/><pre><code>{JSON.stringify(result(), undefined, 4)}</code></pre></>}>
                 <Match when={narrow(result, v => 'msg' in v)}>{success =>
                   <ShowReqSuccess success={success()} />
                 }</Match>
